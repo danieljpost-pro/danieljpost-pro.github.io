@@ -5,3 +5,6 @@
 	path = resume-json-v1
 	url = https://github.com/danieljpost/resume-json
 	branch = master
+[submodule "r1"]
+	path = r1
+	url = https://github.com/danieljpost/resume-json
