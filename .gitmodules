@@ -1,5 +1,4 @@
 [submodule "resume-json"]
 	path = resume-json
 	url = git@github.com:danieljpost/resume-json.git
-	release = "v1.0"
-	#branch = master
+	branch = master
