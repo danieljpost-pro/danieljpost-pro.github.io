@@ -1,6 +1,6 @@
 # About danieljpost-pro
 
-This [account]() is only for hosting my [Pro Website](https://danieljpost.pro) - [see the source code for my Pro Website here](https://github.com/danieljpost-pro/danieljpost-pro.github.io) - and for internal Client Work.
+This [account](https://github.com/danieljpost-pro) is only for hosting my [Pro Website](https://danieljpost.pro) - [see the source code for my Pro Website here](https://github.com/danieljpost-pro/danieljpost-pro.github.io) - and for internal Client Work.
 
 You will not find publicly visible code samples here.
 
