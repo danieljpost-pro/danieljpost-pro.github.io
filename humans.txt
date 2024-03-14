@@ -1,15 +1,7 @@
-# humanstxt.org/
-# The humans responsible & technology colophon
+/* TEAM */
+Grand Poobah: Daniel J. Post
+Site: https://danieljpost.pro
+Location: Saint Paul, MN, USA
 
-# TEAM
-
-    Daniel J. Post -- Charismatic Figurehead -- @danieljpost
-
-# THANKS
-
-    <name>
-
-# TECHNOLOGY COLOPHON
-
-    CSS3, HTML5
-    Apache Server Configs, jQuery, Modernizr, Normalize.css
+/* SITE */
+Last Update: 2024/03/14
