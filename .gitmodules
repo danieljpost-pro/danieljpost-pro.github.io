@@ -1,10 +1,11 @@
 [submodule "resume-json"]
 	path = resume-json
 	url = https://github.com/danieljpost/resume-json
+	branch = master
 [submodule "v1"]
 	path = v1
 	url = https://github.com/danieljpost/resume-json
-	branch = develop
+	branch = master
 [submodule "resume"]
 	path = resume
 	url = https://github.com/danieljpost/resume-json
