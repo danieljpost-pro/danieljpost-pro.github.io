@@ -7,8 +7,8 @@
   <title>Page Not Found</title>
   <meta name="description" content="Sorry, but the page you were trying to view does not exist.">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f5f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#080c14" media="(prefers-color-scheme: dark)">
 
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -20,8 +20,8 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.6;
-      color: #222;
-      background: #fafafa;
+      color: #4a4a4a;
+      background: #f7f5f3;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -31,7 +31,7 @@
     }
 
     h1 {
-      color: #555;
+      color: #7a7a7a;
       font-size: 2em;
       font-weight: 400;
       margin-bottom: 0.25em;
@@ -39,9 +39,20 @@
 
     p { max-width: 280px; }
 
+    @media (prefers-color-scheme: light) {
+      body {
+        background: linear-gradient(to bottom, #e3e5e7 0%, #f7f5f3 40%, #f7f5f3 60%, #e8dcb4 100%);
+        background-attachment: fixed;
+      }
+    }
+
     @media (prefers-color-scheme: dark) {
-      body { color: #e8e8e8; background: #1a1a1a; }
-      h1 { color: #e8e8e8; }
+      body {
+        color: #e3e5e7;
+        background: linear-gradient(to bottom, #080c14 0%, #0c1220 40%, #161828 70%, #1e1c28 100%);
+        background-attachment: fixed;
+      }
+      h1 { color: #e3e5e7; }
     }
   </style>
 </head>
