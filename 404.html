@@ -52,6 +52,28 @@
         background: linear-gradient(to bottom, #080c14 0%, #0c1220 40%, #161828 70%, #1e1c28 100%);
         background-attachment: fixed;
       }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(1px 1px at 7% 12%, rgba(247,245,243,0.7), transparent),
+          radial-gradient(1.5px 1.5px at 23% 4%, rgba(247,245,243,0.8), transparent),
+          radial-gradient(1px 1px at 38% 37%, rgba(247,245,243,0.6), transparent),
+          radial-gradient(1px 1px at 52% 19%, rgba(247,245,243,0.7), transparent),
+          radial-gradient(2px 2px at 64% 8%, rgba(247,245,243,0.9), transparent),
+          radial-gradient(1px 1px at 78% 29%, rgba(247,245,243,0.6), transparent),
+          radial-gradient(1px 1px at 89% 15%, rgba(247,245,243,0.7), transparent),
+          radial-gradient(1px 1px at 3% 45%, rgba(184,212,212,0.5), transparent),
+          radial-gradient(1px 1px at 27% 51%, rgba(232,220,180,0.4), transparent),
+          radial-gradient(1.5px 1.5px at 48% 76%, rgba(232,220,180,0.3), transparent),
+          radial-gradient(1px 1px at 67% 93%, rgba(184,212,212,0.2), transparent),
+          radial-gradient(1.5px 1.5px at 73% 17%, rgba(247,245,243,0.8), transparent),
+          radial-gradient(1px 1px at 91% 35%, rgba(247,245,243,0.6), transparent),
+          radial-gradient(2px 2px at 42% 3%, rgba(247,245,243,0.9), transparent),
+          radial-gradient(1px 1px at 76% 52%, rgba(184,212,212,0.5), transparent);
+      }
       h1 { color: #e3e5e7; }
     }
   </style>
