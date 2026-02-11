@@ -1,12 +1,14 @@
 {
-  "short_name": "Daniel J. Post Professional Website",
-  "name": "Daniel J. Post Professional Website",
+  "short_name": "DJP Consulting",
+  "name": "Daniel J. Post Consulting, Inc.",
   "icons": [{
-    "src": "icon.png",
-    "type": "image/png",
-    "sizes": "192x192"
+    "src": "icon.svg",
+    "type": "image/svg+xml",
+    "sizes": "any"
   }],
-  "start_url": "/?utm_source=homescreen",
-  "background_color": "#fafafa",
-  "theme_color": "#fafafa"
+  "id": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a"
 }

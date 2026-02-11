@@ -1,42 +1,76 @@
+<!--
+  If you're reading this, you're my kind of person.
+  Thank you for caring enough to view source —
+  it tells me you're genuinely interested in how things work.
+  Use the source, Luke.
+-->
 <!doctype html>
-<html class="no-js" lang="en">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Daniel J. Post Consulting, Inc.</title>
-  <link rel="stylesheet" href="css/style.css">
   <meta name="description" content="Daniel J. Post is a Web Developer and a Talented Pain In The Ass.">
-
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
 
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.png">
-
   <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+
+  <link rel="preconnect" href="https://www.googletagmanager.com">
+  <link rel="preconnect" href="https://cdnjs.buymeacoffee.com">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: #222;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    main p {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    main p:first-child {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    a {
+      color: #3355cc;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    @media (prefers-color-scheme: dark) {
+      body { color: #e8e8e8; background: #1a1a1a; }
+      a { color: #7ba4f7; }
+    }
+  </style>
 </head>
 
 <body>
-  <!--[if IE]>
-      <p class="browserupgrade">
-        You are using an <strong>outdated</strong> browser. Please
-        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
-        your experience and security.
-      </p>
-    <![endif]-->
-
-  <p>Hello, I'm Daniel J. Post.</p>
-  <p>
-    You are probably looking for my
-    <a href="https://linkedin.com/in/danieljpost/">LinkedIn Profile</a>
-  </p>
-
-  <script>document.documentElement.className = ""</script>
+  <main>
+    <p>Hello, I'm Daniel J. Post.</p>
+    <p>
+      You are probably looking for my
+      <a href="https://linkedin.com/in/danieljpost/">LinkedIn Profile</a>
+    </p>
+  </main>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-B7691LP01R"></script>
   <script>
