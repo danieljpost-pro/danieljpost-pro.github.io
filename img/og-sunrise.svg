@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" role="img" aria-labelledby="t">
+  <title id="t">A sunrise over low hills</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0c1220"/>
+      <stop offset="0.38" stop-color="#2a2a4a"/>
+      <stop offset="0.62" stop-color="#7a4a5e"/>
+      <stop offset="0.8" stop-color="#e08a5a"/>
+      <stop offset="0.92" stop-color="#f2c879"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="600" cy="470" r="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff3d6" stop-opacity="0.85"/>
+      <stop offset="0.35" stop-color="#f6c97f" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#f6c97f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sun" cx="600" cy="470" r="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="0.7" stop-color="#ffe6a8"/>
+      <stop offset="1" stop-color="#f6b45c"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="627" fill="url(#sky)"/>
+
+  <!-- last stars -->
+  <g fill="#f7f5f3">
+    <circle cx="96" cy="58" r="1.6" opacity="0.8"/>
+    <circle cx="248" cy="122" r="1.2" opacity="0.6"/>
+    <circle cx="402" cy="40" r="1.8" opacity="0.7"/>
+    <circle cx="790" cy="72" r="1.3" opacity="0.6"/>
+    <circle cx="936" cy="30" r="1.9" opacity="0.8"/>
+    <circle cx="1088" cy="104" r="1.4" opacity="0.6"/>
+    <circle cx="1150" cy="48" r="1.1" opacity="0.5"/>
+    <circle cx="680" cy="22" r="1.2" opacity="0.5"/>
+  </g>
+
+  <rect width="1200" height="627" fill="url(#glow)"/>
+
+  <!-- rays -->
+  <g stroke="#fff3d6" stroke-width="3" stroke-linecap="round" opacity="0.35">
+    <line x1="600" y1="300" x2="600" y2="230"/>
+    <line x1="480" y1="330" x2="440" y2="272"/>
+    <line x1="720" y1="330" x2="760" y2="272"/>
+    <line x1="385" y1="395" x2="322" y2="362"/>
+    <line x1="815" y1="395" x2="878" y2="362"/>
+  </g>
+
+  <circle cx="600" cy="470" r="128" fill="url(#sun)"/>
+
+  <!-- hills -->
+  <path d="M0 470 C 160 420, 300 440, 430 470 S 760 430, 900 455 S 1110 440, 1200 450 L1200 627 L0 627 Z" fill="#2b2338"/>
+  <path d="M0 520 C 180 480, 360 505, 540 530 S 880 490, 1040 515 S 1160 510, 1200 505 L1200 627 L0 627 Z" fill="#1e1c28"/>
+  <path d="M0 575 C 220 548, 420 570, 640 586 S 1000 560, 1200 572 L1200 627 L0 627 Z" fill="#141626"/>
+
+  <!-- name -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" fill="#f7f5f3">
+    <text x="64" y="116" font-size="64" font-weight="700">Daniel J. Post</text>
+    <text x="66" y="168" font-size="30" fill="#e8dcb4">Resume</text>
+  </g>
+</svg>
