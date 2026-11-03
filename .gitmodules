@@ -14,3 +14,7 @@
 	path = resume-develop
 	url = https://github.com/danieljpost/resume-json
 	branch = develop
+[submodule "resume-2026.11-develop"]
+	path = resume-2026.11-develop
+	url = https://github.com/danieljpost/resume-json
+	branch = 2026.11-develop
