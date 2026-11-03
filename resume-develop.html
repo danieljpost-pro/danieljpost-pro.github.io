@@ -1,0 +1,749 @@
+<!--
+  This page renders resume-develop/resume.json (the develop branch of
+  danieljpost/resume-json) in the browser. The JSON is maintained separately;
+  nothing here changes its structure. Pick a tier and the page re-tailors itself.
+-->
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daniel J. Post — Resume</title>
+  <meta name="description" content="Resume of Daniel J. Post, tailored by role, rendered live from resume.json.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0c1220" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f5f3" media="(prefers-color-scheme: light)">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+
+  <script>
+    // Apply a saved theme override before first paint (no flash).
+    try {
+      const t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch {}
+  </script>
+
+  <style>
+    /* ---------- Tokens: dark is the default; light only when the browser asks for it ---------- */
+    :root {
+      color-scheme: dark;
+      --bg: #0c1220;
+      --bg-grad: linear-gradient(to bottom, #080c14 0%, #0c1220 40%, #161828 75%, #1e1c28 100%);
+      --surface: #131a2b;
+      --surface-2: #1a2236;
+      --border: #26304a;
+      --text: #e3e5e7;
+      --muted: #9aa3b5;
+      --faint: #6b7489;
+      --accent: #a8c0d4;
+      --accent-strong: #cfe0ee;
+      --accent-soft: rgba(168, 192, 212, 0.14);
+      --warm: #e8dcb4;
+      --warm-soft: rgba(232, 220, 180, 0.12);
+      --meter: #a8c0d4;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) {
+        color-scheme: light;
+        --bg: #f7f5f3;
+        --bg-grad: linear-gradient(to bottom, #e3e5e7 0%, #f7f5f3 30%, #f7f5f3 70%, #efe7cf 100%);
+        --surface: #ffffff;
+        --surface-2: #f1eee9;
+        --border: #e2ddd5;
+        --text: #24282f;
+        --muted: #5b6270;
+        --faint: #8a909c;
+        --accent: #3f6a85;
+        --accent-strong: #2c4f66;
+        --accent-soft: rgba(77, 122, 150, 0.1);
+        --warm: #8a6d1f;
+        --warm-soft: rgba(232, 220, 180, 0.45);
+        --meter: #4d7a96;
+        --shadow: 0 1px 2px rgba(30, 30, 40, 0.06), 0 8px 24px rgba(30, 30, 40, 0.06);
+      }
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f5f3;
+      --bg-grad: linear-gradient(to bottom, #e3e5e7 0%, #f7f5f3 30%, #f7f5f3 70%, #efe7cf 100%);
+      --surface: #ffffff;
+      --surface-2: #f1eee9;
+      --border: #e2ddd5;
+      --text: #24282f;
+      --muted: #5b6270;
+      --faint: #8a909c;
+      --accent: #3f6a85;
+      --accent-strong: #2c4f66;
+      --accent-soft: rgba(77, 122, 150, 0.1);
+      --warm: #8a6d1f;
+      --warm-soft: rgba(232, 220, 180, 0.45);
+      --meter: #4d7a96;
+      --shadow: 0 1px 2px rgba(30, 30, 40, 0.06), 0 8px 24px rgba(30, 30, 40, 0.06);
+    }
+
+    /* ---------- Base ---------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      background-image: var(--bg-grad);
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; color: var(--accent-strong); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+    }
+
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 16px 64px; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .avatar {
+      width: 112px; height: 112px; border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--surface-2);
+      box-shadow: var(--shadow);
+      background: var(--surface-2);
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4.5vw, 2.9rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+    .headline {
+      font-size: 1.15rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .contact {
+      display: flex; flex-wrap: wrap; gap: 6px 18px;
+      margin-top: 10px; padding: 0; list-style: none;
+      color: var(--muted); font-size: 0.95rem;
+    }
+    .contact li { display: inline-flex; align-items: center; gap: 6px; }
+    .contact svg { width: 16px; height: 16px; flex: none; opacity: 0.8; }
+
+    /* ---------- Toolbar: tier picker + actions ---------- */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px 20px;
+      align-items: flex-end; justify-content: space-between;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+    .tiers { border: 0; padding: 0; min-width: 0; flex: 1 1 520px; }
+    .tiers legend {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px; padding: 0;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { position: relative; }
+    .chip input { position: absolute; opacity: 0; pointer-events: none; }
+    .chip span {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .chip span:hover { border-color: var(--accent); }
+    .chip input:checked + span {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+    }
+    .chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font: inherit; font-size: 0.9rem;
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn svg { width: 16px; height: 16px; }
+
+    /* ---------- Layout ---------- */
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    section + section { margin-top: 36px; }
+    .section-title {
+      display: flex; align-items: baseline; gap: 10px;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .count { color: var(--faint); font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+    .summary { font-size: 1.1rem; line-height: 1.65; max-width: 68ch; }
+
+    .stats {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px; margin-top: 20px;
+    }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .stat b { display: block; font-size: 1.5rem; line-height: 1.2; color: var(--accent-strong); }
+    .stat span { font-size: 0.85rem; color: var(--muted); }
+
+    /* ---------- Experience ---------- */
+    .timeline { list-style: none; padding: 0; position: relative; }
+    .gig {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .gig + .gig { margin-top: 14px; }
+    .gig-head {
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      gap: 4px 16px; align-items: baseline;
+    }
+    .gig h3 { font-size: 1.15rem; line-height: 1.3; }
+    .gig .org { color: var(--muted); font-size: 0.95rem; margin-top: 2px; }
+    .gig .org a { font-weight: 600; }
+    .when {
+      font-size: 0.85rem; color: var(--muted);
+      font-variant-numeric: tabular-nums; white-space: nowrap;
+    }
+    .when .dur { color: var(--faint); }
+    .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .badge {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--accent);
+    }
+    .badge.current { background: var(--warm-soft); color: var(--warm); }
+    a.badge:hover { text-decoration: none; filter: brightness(1.15); }
+    .gig p { margin-top: 10px; max-width: 72ch; }
+    .gig ul.bullets { margin: 10px 0 0; padding-left: 1.2em; max-width: 72ch; }
+    .gig ul.bullets li + li { margin-top: 4px; }
+    .gig ul.bullets li::marker { color: var(--accent); }
+
+    details.more { margin-top: 8px; }
+    details.more > summary {
+      cursor: pointer; font-size: 0.88rem; color: var(--accent);
+      list-style: none; display: inline-flex; align-items: center; gap: 4px;
+    }
+    details.more > summary::-webkit-details-marker { display: none; }
+    details.more > summary::before { content: "▸"; transition: transform 0.15s; }
+    details.more[open] > summary::before { transform: rotate(90deg); }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding: 0; list-style: none; }
+    .tag {
+      font-size: 0.78rem; padding: 2px 9px; border-radius: 6px;
+      background: var(--surface-2); color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .compact { list-style: none; padding: 0; }
+    .compact li {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .compact li:last-child { border-bottom: 0; }
+    .compact .role { font-weight: 600; }
+    .compact .role span { font-weight: 400; color: var(--muted); }
+
+    /* ---------- Recommendations ---------- */
+    .recs { display: grid; gap: 14px; }
+    .rec {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--warm);
+      border-radius: 12px; padding: 16px 18px;
+      scroll-margin-top: 16px;
+    }
+    .rec:target { box-shadow: 0 0 0 2px var(--warm); }
+    .rec blockquote { font-style: italic; max-width: 72ch; }
+    .rec blockquote::before { content: "“"; }
+    .rec blockquote::after { content: "”"; }
+    .rec figcaption { margin-top: 10px; font-size: 0.9rem; color: var(--muted); }
+    .rec figcaption b { color: var(--text); }
+
+    /* ---------- Sidebar: skills ---------- */
+    aside .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; box-shadow: var(--shadow);
+    }
+    aside .panel + .panel { margin-top: 20px; }
+    aside h2 { margin-bottom: 12px; }
+    .meters { list-style: none; padding: 0; display: grid; gap: 10px; }
+    .meter-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; font-size: 0.92rem; }
+    .meter-row .lvl { color: var(--faint); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+    .meter {
+      grid-column: 1 / -1; height: 5px; border-radius: 3px;
+      background: var(--surface-2); overflow: hidden;
+    }
+    .meter i { display: block; height: 100%; border-radius: 3px; background: var(--meter); }
+    .cat + .cat { margin-top: 6px; }
+    details.more.cat > summary { padding: 6px 0; font-weight: 600; font-size: 0.92rem; color: var(--text); }
+    .cat > summary .count { margin-left: 4px; }
+    .cat .tags { margin: 4px 0 8px; }
+    .cat .tag a { color: inherit; }
+
+    footer {
+      margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border);
+      font-size: 0.85rem; color: var(--faint);
+      display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between;
+    }
+
+    .status { padding: 48px 0; text-align: center; color: var(--muted); }
+    .status.error { color: var(--warm); }
+
+    @media (max-width: 560px) {
+      .hero { grid-template-columns: 1fr; text-align: left; gap: 14px; }
+      .avatar { width: 84px; height: 84px; }
+      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .stat { padding: 10px; }
+      .stat b { font-size: 1.2rem; }
+      .gig { padding: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+
+    /* ---------- Print: always light, one column, everything expanded ---------- */
+    @media print {
+      :root, :root[data-theme] {
+        color-scheme: light;
+        --bg: #fff; --bg-grad: none; --surface: #fff; --surface-2: #f3f3f3;
+        --border: #ddd; --text: #111; --muted: #444; --faint: #666;
+        --accent: #2c4f66; --accent-strong: #2c4f66; --accent-soft: #eef3f7;
+        --warm: #6b5413; --warm-soft: #f5efdc; --meter: #2c4f66; --shadow: none;
+      }
+      body { font-size: 10.5pt; }
+      .wrap { padding: 0; max-width: none; }
+      .toolbar, .no-print { display: none !important; }
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      .gig, .rec, aside .panel { break-inside: avoid; }
+      details.more > summary { display: none; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div id="app">
+      <p class="status">Loading resume…</p>
+    </div>
+    <p class="visually-hidden" id="announce" role="status"></p>
+  </div>
+
+  <script type="module">
+    // Data source: the develop-branch build of danieljpost/resume-json (git submodule).
+    const SRC = 'resume-develop/resume.json';
+    const DEFAULT_TIER = 'Software Engineer';
+    const FULL_CARD_MIN_RELEVANCE = 5;   // gigs below this render in the compact list
+    const MAX_BULLETS = 4;               // accomplishments shown before "more"
+    const MAX_TECH = 10;                 // technology tags per gig
+    const CORE_SKILLS = 12;              // meters in the "Core skills" panel
+    const RECS_SHOWN = 3;                // recommendations shown before "more"
+
+    const app = document.getElementById('app');
+
+    // ---------- Tiny, safe templating ----------
+    class Raw { constructor(s) { this.s = s; } }
+    const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    const esc = v => String(v).replace(/[&<>"']/g, c => ESC[c]);
+    const val = v =>
+      v == null || v === false ? '' :
+      Array.isArray(v) ? v.map(val).join('') :
+      v instanceof Raw ? v.s : esc(v);
+    const html = (strings, ...vals) =>
+      new Raw(strings.reduce((out, s, i) => out + s + (i < vals.length ? val(vals[i]) : ''), ''));
+    const safeUrl = u => {
+      try {
+        const url = new URL(u, location.href);
+        return ['http:', 'https:', 'mailto:'].includes(url.protocol) ? url.href : null;
+      } catch { return null; }
+    };
+    const link = (href, text, attrs = '') => {
+      const u = safeUrl(href);
+      return u ? html`<a href="${u}" ${new Raw(attrs)}>${text}</a>` : html`${text}`;
+    };
+
+    // ---------- Dates (always YYYY-MM-DD) ----------
+    const isoDate = v => {
+      if (v == null || v === '') return null;
+      const s = String(v);
+      if (/^\d{8}$/.test(s)) return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
+      const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      return m ? `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}` : s;
+    };
+    const today = new Date().toISOString().slice(0, 10);
+    const toUTC = d => Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10));
+    const duration = (start, end) => {
+      const months = Math.max(1, Math.round((toUTC(end ?? today) - toUTC(start)) / (864e5 * 30.437)));
+      const y = Math.floor(months / 12), m = months % 12;
+      return [y && `${y} yr${y > 1 ? 's' : ''}`, m && `${m} mo${m > 1 ? 's' : ''}`].filter(Boolean).join(' ');
+    };
+
+    // ---------- Icons ----------
+    const icon = path => new Raw(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`);
+    const ICONS = {
+      mail: icon('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'),
+      pin: icon('<path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'),
+      globe: icon('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'),
+      brief: icon('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
+      print: icon('<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/>'),
+      sun: icon('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+      moon: icon('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'),
+      json: icon('<path d="M8 3H6a2 2 0 0 0-2 2v4l-2 3 2 3v4a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v4l2 3-2 3v4a2 2 0 0 1-2 2h-2"/>'),
+    };
+
+    // ---------- Theme ----------
+    const prefersLight = matchMedia('(prefers-color-scheme: light)');
+    const currentTheme = () => document.documentElement.dataset.theme ?? (prefersLight.matches ? 'light' : 'dark');
+    const themeButton = () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      return html`<button class="btn" type="button" id="theme" aria-label="Switch to ${next} theme">
+        ${next === 'light' ? ICONS.sun : ICONS.moon}<span>${next === 'light' ? 'Light' : 'Dark'}</span></button>`;
+    };
+
+    // ---------- Load ----------
+    let data;
+    try {
+      const res = await fetch(SRC, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${SRC}`);
+      data = await res.json();
+    } catch (err) {
+      app.innerHTML = html`<p class="status error">Couldn't load the resume data (${err.message}).
+        ${location.protocol === 'file:' ? 'Serve this folder over HTTP (e.g. python3 -m http.server) rather than opening the file directly.' : ''}</p>`.s;
+      throw err;
+    }
+
+    const me = data.me ?? {};
+    const tiers = data.tiers ?? [];
+    const gigs = data.gigs ?? [];
+    const skills = data.skills ?? [];
+    const recs = data.recommendations ?? [];
+    const companies = new Map((data.companies ?? []).map(c => [c._id, c]));
+    const skillBySname = new Map(skills.map(s => [s.sname, s]));
+    const recsByGig = Map.groupBy
+      ? Map.groupBy(recs, r => r.gigId)
+      : recs.reduce((m, r) => m.set(r.gigId, [...(m.get(r.gigId) ?? []), r]), new Map());
+    const ownedCompany = [...companies.values()].find(c => c.type === 'owned');
+    const homeLocation = gigs.find(g => g.gigType === 'owner' && g.location)?.location;
+    const earliestStart = gigs.map(g => isoDate(g.startDate)).filter(Boolean).sort()[0];
+    const updated = isoDate(data.updated);
+
+    // Expose schema.org Person data (minus birthDate) for crawlers.
+    if (me['@type']) {
+      const { birthDate, ...person } = me;
+      const ld = document.createElement('script');
+      ld.type = 'application/ld+json';
+      ld.textContent = JSON.stringify(person);
+      document.head.append(ld);
+    }
+
+    // ---------- Tier selection (URL is the source of truth, so links are shareable) ----------
+    // Matching is case-insensitive, so ?tier=back%20end and ?tier=Back+End both work.
+    const tierFromUrl = () => {
+      const want = new URLSearchParams(location.search).get('tier')?.trim().toLowerCase();
+      return tiers.find(t => t.toLowerCase() === want)
+        ?? (tiers.includes(DEFAULT_TIER) ? DEFAULT_TIER : tiers[0]);
+    };
+    let tier = tierFromUrl();
+
+    // ---------- Views ----------
+    const companyName = id => companies.get(id)?.fullname ?? companies.get(id)?.name ?? '';
+    const companyLink = id => {
+      const c = companies.get(id);
+      return c ? link(c.url, c.fullname ?? c.name, 'rel="noopener"') : '';
+    };
+    const nonEmpty = s => typeof s === 'string' && s.trim() && !/^fixme$/i.test(s.trim());
+    const relevanceOf = x => (typeof x.relevance === 'number' ? x.relevance : 5);
+    const GIG_TYPES = { owner: 'Owner', employee: 'Employee', contract: 'Contract' };
+
+    const whenView = g => {
+      const start = isoDate(g.startDate), end = isoDate(g.endDate);
+      return html`<div class="when">
+        <time datetime="${start}">${start}</time> – ${end ? html`<time datetime="${end}">${end}</time>` : 'Present'}
+        <span class="dur">· ${duration(start, end)}</span></div>`;
+    };
+
+    const gigCard = g => {
+      const summary = [g.blurbs?.[tier], g.shortDesc].find(nonEmpty);
+      const long = nonEmpty(g.longDesc) && g.longDesc !== summary ? g.longDesc : null;
+      const wins = (g.accomplishments ?? []).filter(nonEmpty).filter(a => a !== summary);
+      const tech = [...(g.technologies ?? [])]
+        .sort((a, b) => (b.relevance ?? 0) - (a.relevance ?? 0))
+        .slice(0, MAX_TECH)
+        .map(t => skillBySname.get(t.skillName)?.name ?? t.skillName);
+      const gigRecs = recsByGig.get(g._id) ?? [];
+      const contractor = g.contractorId && companies.get(g.contractorId);
+      const extra = wins.slice(MAX_BULLETS);
+
+      return html`<li class="gig">
+        <div class="gig-head">
+          <div>
+            <h3>${g.title}</h3>
+            <div class="org">${companyLink(g.companyId)}${contractor ? html` <span>via ${companyLink(g.contractorId)}</span>` : ''}${g.location ? html` · ${g.location}` : ''}</div>
+          </div>
+          ${whenView(g)}
+        </div>
+        <div class="badges">
+          ${!g.endDate ? html`<span class="badge current">Current</span>` : ''}
+          ${GIG_TYPES[g.gigType] ? html`<span class="badge">${GIG_TYPES[g.gigType]}</span>` : ''}
+          ${gigRecs.length ? html`<a class="badge" href="#rec-${gigRecs[0]._id}">★ ${gigRecs.length} recommendation${gigRecs.length > 1 ? 's' : ''}</a>` : ''}
+        </div>
+        ${summary ? html`<p>${summary}</p>` : ''}
+        ${wins.length ? html`<ul class="bullets">${wins.slice(0, MAX_BULLETS).map(a => html`<li>${a}</li>`)}</ul>` : ''}
+        ${extra.length || long ? html`<details class="more">
+            <summary>${extra.length ? `${extra.length} more accomplishment${extra.length > 1 ? 's' : ''}` : 'More detail'}</summary>
+            ${extra.length ? html`<ul class="bullets">${extra.map(a => html`<li>${a}</li>`)}</ul>` : ''}
+            ${long ? html`<p>${long}</p>` : ''}
+          </details>` : ''}
+        ${tech.length ? html`<ul class="tags" aria-label="Technologies">${tech.map(t => html`<li class="tag">${t}</li>`)}</ul>` : ''}
+      </li>`;
+    };
+
+    const compactRow = g => {
+      const start = isoDate(g.startDate), end = isoDate(g.endDate);
+      return html`<li>
+        <div class="role">${g.title} <span>· ${companyName(g.companyId)}</span></div>
+        <div class="when"><time datetime="${start}">${start}</time> – ${end ? html`<time datetime="${end}">${end}</time>` : 'Present'}</div>
+      </li>`;
+    };
+
+    const recCard = r => html`<figure class="rec" id="rec-${r._id}">
+      <blockquote>${r.recommendation}</blockquote>
+      <figcaption>
+        <b>${r.linkedIn ? link(r.linkedIn, r.name, 'rel="noopener"') : r.name}</b>${r.title ? html`, ${r.title}` : ''}<br>
+        ${r.relationship}${r.when ? html` · <time datetime="${isoDate(r.when)}">${isoDate(r.when)}</time>` : ''}
+      </figcaption>
+    </figure>`;
+
+    const meterRow = s => {
+      const lvl = Math.max(0, Math.min(10, s.expertise ?? 0));
+      return html`<li class="meter-row" title="${s.description ?? ''}">
+        <span>${s.url ? link(s.url, s.name, 'rel="noopener"') : s.name}</span>
+        <span class="lvl">${lvl}/10</span>
+        <span class="meter" role="meter" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${lvl}" aria-label="${s.name} expertise"><i style="width:${lvl * 10}%"></i></span>
+      </li>`;
+    };
+
+    const render = () => {
+      // Positions: those tagged for this tier, current ones first, then most recently ended.
+      const sortKey = g => `${isoDate(g.endDate) ?? '9999-99-99'}|${isoDate(g.startDate)}`;
+      const tierGigs = gigs
+        .filter(g => g.tiers?.includes(tier))
+        .sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
+      const featured = tierGigs.filter(g => relevanceOf(g) >= FULL_CARD_MIN_RELEVANCE);
+      const minor = tierGigs.filter(g => relevanceOf(g) < FULL_CARD_MIN_RELEVANCE);
+      const tierGigIds = new Set(tierGigs.map(g => g._id));
+
+      // Skills: tagged for this tier, most relevant first.
+      const tierSkills = skills
+        .filter(s => s.tiers?.includes(tier))
+        .sort((a, b) => (b.relevance ?? 0) - (a.relevance ?? 0) || (b.expertise ?? 0) - (a.expertise ?? 0) || a.name.localeCompare(b.name));
+      const core = tierSkills.slice(0, CORE_SKILLS);
+      const byCat = (data.skillCategories ?? [])
+        .map(cat => [cat, tierSkills.filter(s => s.category === cat)])
+        .filter(([, list]) => list.length);
+
+      // Recommendations: those tied to this tier's positions first, then by priority and recency.
+      const sortedRecs = [...recs].sort((a, b) =>
+        (tierGigIds.has(b.gigId) - tierGigIds.has(a.gigId)) ||
+        ((b.priority ?? 0) - (a.priority ?? 0)) ||
+        String(isoDate(b.when)).localeCompare(String(isoDate(a.when))));
+
+      const intro = [data.intros?.[tier], data.intros?.[DEFAULT_TIER]].find(nonEmpty);
+      const years = earliestStart ? Math.floor((toUTC(today) - toUTC(earliestStart)) / (864e5 * 365.25)) : null;
+
+      document.title = `${me.name ?? 'Resume'} — ${tier} Resume`;
+
+      app.innerHTML = html`
+        <header class="hero">
+          ${me.image ? html`<img class="avatar" src="${safeUrl(me.image)}" alt="Portrait of ${me.name}" width="112" height="112">` : ''}
+          <div>
+            <h1>${me.name}</h1>
+            <p class="headline">${tier}${me.owns ? html` · ${me.owns}` : ''}</p>
+            <ul class="contact">
+              ${me.email ? html`<li>${ICONS.mail}${link(`mailto:${me.email}`, me.email)}</li>` : ''}
+              ${homeLocation ? html`<li>${ICONS.pin}${homeLocation}</li>` : ''}
+              ${safeUrl(ownedCompany?.url) ? html`<li>${ICONS.globe}${link(ownedCompany.url, new URL(safeUrl(ownedCompany.url)).host, 'rel="noopener"')}</li>` : ''}
+            </ul>
+          </div>
+        </header>
+
+        <div class="toolbar">
+          <fieldset class="tiers">
+            <legend>Tailor this resume for</legend>
+            <div class="chips">
+              ${tiers.map(t => html`<label class="chip"><input type="radio" name="tier" value="${t}" ${t === tier ? new Raw('checked') : ''}><span>${t}</span></label>`)}
+            </div>
+          </fieldset>
+          <div class="actions">
+            ${themeButton()}
+            <button class="btn" type="button" id="print">${ICONS.print}<span>Print</span></button>
+          </div>
+        </div>
+
+        <div class="layout">
+          <main>
+            <section aria-labelledby="h-summary">
+              <h2 class="section-title" id="h-summary">Summary</h2>
+              ${intro ? html`<p class="summary">${intro}</p>` : ''}
+              <div class="stats">
+                ${years ? html`<div class="stat"><b>${years}+</b><span>years (since ${earliestStart.slice(0, 4)})</span></div>` : ''}
+                <div class="stat"><b>${tierGigs.length}</b><span>${tier} positions</span></div>
+                <div class="stat"><b>${tierSkills.length}</b><span>${tier} skills</span></div>
+              </div>
+            </section>
+
+            <section aria-labelledby="h-exp">
+              <h2 class="section-title" id="h-exp">Experience <span class="count">${featured.length}</span></h2>
+              ${featured.length ? html`<ol class="timeline">${featured.map(gigCard)}</ol>` : html`<p>No positions are tagged for ${tier} yet.</p>`}
+            </section>
+
+            ${minor.length ? html`<section aria-labelledby="h-more">
+              <h2 class="section-title" id="h-more">Additional engagements <span class="count">${minor.length}</span></h2>
+              <ul class="compact">${minor.map(compactRow)}</ul>
+            </section>` : ''}
+
+            ${sortedRecs.length ? html`<section aria-labelledby="h-recs">
+              <h2 class="section-title" id="h-recs">Recommendations <span class="count">${recs.length}</span></h2>
+              <div class="recs">${sortedRecs.slice(0, RECS_SHOWN).map(recCard)}</div>
+              ${sortedRecs.length > RECS_SHOWN ? html`<details class="more" id="more-recs">
+                <summary>${sortedRecs.length - RECS_SHOWN} more recommendations</summary>
+                <div class="recs" style="margin-top:14px">${sortedRecs.slice(RECS_SHOWN).map(recCard)}</div>
+              </details>` : ''}
+            </section>` : ''}
+          </main>
+
+          <aside aria-label="Skills">
+            ${core.length ? html`<div class="panel">
+              <h2 class="section-title">Core skills</h2>
+              <ul class="meters">${core.map(meterRow)}</ul>
+            </div>` : ''}
+            ${byCat.length ? html`<div class="panel">
+              <h2 class="section-title">Toolkit <span class="count">${tierSkills.length}</span></h2>
+              ${byCat.map(([cat, list], i) => html`<details class="more cat" ${i < 3 ? new Raw('open') : ''}>
+                <summary>${cat}<span class="count">${list.length}</span></summary>
+                <ul class="tags">${list.map(s => html`<li class="tag" title="${s.description ?? ''}">${s.url ? link(s.url, s.name, 'rel="noopener"') : s.name}</li>`)}</ul>
+              </details>`)}
+            </div>` : ''}
+          </aside>
+        </div>
+
+        <footer>
+          <span>Rendered from ${link(SRC, 'resume.json')}${data.tag ? html` · ${data.tag}` : ''}${updated ? html` · updated <time datetime="${updated}">${updated}</time>` : ''}</span>
+          <span class="no-print">${link('/', 'danieljpost.pro')}</span>
+        </footer>`.s;
+
+      document.getElementById('announce').textContent =
+        `Showing the ${tier} resume: ${tierGigs.length} positions, ${tierSkills.length} skills.`;
+    };
+
+    // ---------- Events (delegated, so they survive re-renders) ----------
+    app.addEventListener('change', e => {
+      if (e.target.name !== 'tier') return;
+      tier = e.target.value;
+      const url = new URL(location.href);
+      url.searchParams.set('tier', tier);
+      url.hash = '';
+      history.pushState({ tier }, '', url);
+      render();
+      app.querySelector(`input[name="tier"][value="${CSS.escape(tier)}"]`)?.focus();
+    });
+
+    // Back/Forward walk through tier choices.
+    addEventListener('popstate', () => {
+      const next = tierFromUrl();
+      if (next !== tier) { tier = next; render(); }
+    });
+
+    app.addEventListener('click', e => {
+      if (e.target.closest('#print')) return window.print();
+      if (!e.target.closest('#theme')) return;
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch {}
+      document.getElementById('theme').outerHTML = themeButton().s;
+      document.getElementById('theme').focus();
+    });
+
+    prefersLight.addEventListener('change', () => {
+      const btn = document.getElementById('theme');
+      if (btn) btn.outerHTML = themeButton().s;
+    });
+
+    // Expand every <details> for print, then restore.
+    let closedForPrint = [];
+    addEventListener('beforeprint', () => {
+      closedForPrint = [...document.querySelectorAll('details:not([open])')];
+      closedForPrint.forEach(d => (d.open = true));
+    });
+    addEventListener('afterprint', () => closedForPrint.forEach(d => (d.open = false)));
+
+    render();
+  </script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B7691LP01R"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-B7691LP01R');
+  </script>
+</body>
+
+</html>
