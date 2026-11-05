@@ -304,7 +304,7 @@ JS_FACTS = r"""(() => {
   const positions = [...document.querySelectorAll('#app .job')].map(el => {
     if (el.classList.contains('compact')) {
       const [title, company, range] = t(el).split(' | ');
-      return { kind: 'compact', title, company, range };
+      return { kind: 'compact', title: title ?? '', company: company ?? '', range: range ?? '' };   // a malformed line fails H6
     }
     const head = t(el.querySelector(':scope > .job-title'));
     const parts = t(el.querySelector(':scope > .job-meta')).split(' | ');
@@ -1075,7 +1075,7 @@ def run_config(browser, port, cfg, ctx):
 
     # H19 file name / title
     display = eff["client"] if eff["locked"] else eff["tier"]
-    want_title = f"{slugify(me.get('name'))}-Resume-{slugify(display)}-{date.today().isoformat()}"
+    want_title = f"{slugify(me.get('name'))}-Resume-{slugify(display)}-{owner_today()[0]}"
     got = info.get("Title", "")
     res.add("H19", PASS if got == want_title else FAIL, "Print title = file name",
             f"got {got!r}" + ("" if got == want_title else f", want {want_title!r}"))
@@ -1089,9 +1089,15 @@ def run_config(browser, port, cfg, ctx):
     return digest
 
 
+def owner_today():
+    """The page dates everything in the owner's time zone (TIME_ZONE in the page)."""
+    zone = re.search(r"const TIME_ZONE\s*=\s*'([^']+)'", (ROOT / PAGE).read_text(encoding="utf-8"))
+    return datetime.now(ZoneInfo(zone[1] if zone else "America/Chicago")).date().isoformat(), (zone[1] if zone else None)
+
+
 def timezone_check(browser, port, ctx):
-    """H19b: the date in the file name is the reader's local date, not UTC."""
-    zone = "Pacific/Kiritimati"   # UTC+14: its date differs from UTC's for 14 hours a day
+    """H19b: the date in the file name is the owner's date (US Central), whatever the reader's zone."""
+    zone = "Pacific/Kiritimati"   # UTC+14: its date differs from Chicago's for 20 hours a day
     tab = browser.tab()
     try:
         tab.send("Emulation.setTimezoneOverride", {"timezoneId": zone})
@@ -1099,12 +1105,16 @@ def timezone_check(browser, port, ctx):
         title = tab.eval("dispatchEvent(new Event('beforeprint')); const t = document.title; dispatchEvent(new Event('afterprint')); t")
     finally:
         tab.close()
-    local = datetime.now(ZoneInfo(zone)).date().isoformat()
+    reader = datetime.now(ZoneInfo(zone)).date().isoformat()
     utc = datetime.now(ZoneInfo("UTC")).date().isoformat()
-    if local == utc:
-        return SKIP, f"local and UTC dates agree right now ({local}); rerun later to test"
+    owner, owner_zone = owner_today()
+    if not owner_zone:
+        return FAIL, "the page declares no TIME_ZONE"
+    if owner == reader == utc:
+        return SKIP, f"{owner_zone}, {zone} and UTC share a date right now ({owner}); rerun later to test"
     got = title[-10:]
-    return (PASS if got == local else FAIL), f"in {zone} the title ends {got}; local date {local}, UTC {utc}"
+    return (PASS if got == owner else FAIL), (f"reader in {zone} ({reader}), UTC {utc}: title ends {got}; "
+                                               f"{owner_zone} date {owner}")
 
 
 def robots_check():
@@ -1256,7 +1266,7 @@ def main():
         site.append(("H13", PASS if len(shas) == 1 else FAIL, "Raw HTML byte-identical across query strings",
                      f"{len(digests)} fetch(es), {len(shas)} distinct body(ies)"))
         st, detail = timezone_check(browser, port, ctx)
-        site.append(("H19", st, "File-name date is the reader's local date", detail))
+        site.append(("H19", st, "File-name date is the owner's (US Central) date in any reader time zone", detail))
         st, detail = robots_check()
         site.append(("H20", st, "robots.txt Sitemap resolves", detail))
     finally:
